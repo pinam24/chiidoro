@@ -386,3 +386,124 @@ function toggleSettings() {
         soundManager.stopSound();
     }
 }
+
+// Add at the top of the file with other global variables
+let audioContext = null;
+let audioBuffer = null;
+let isAudioContextInitialized = false;
+
+// Add this function to initialize audio context
+function initializeAudioContext() {
+    if (!isAudioContextInitialized) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        isAudioContextInitialized = true;
+        
+        // Resume audio context if it was suspended
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    }
+}
+
+// Modify the loadAlarmSound function
+async function loadAlarmSound() {
+    try {
+        const selectedSound = document.getElementById('alarmSound').value;
+        const response = await fetch(`sounds/${selectedSound}`);
+        const arrayBuffer = await response.arrayBuffer();
+        
+        // Initialize audio context if not already done
+        if (!isAudioContextInitialized) {
+            initializeAudioContext();
+        }
+        
+        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        console.log('Alarm sound loaded successfully');
+    } catch (error) {
+        console.error('Error loading alarm sound:', error);
+    }
+}
+
+// Modify the playAlarm function
+async function playAlarm() {
+    try {
+        if (!isAudioContextInitialized) {
+            initializeAudioContext();
+        }
+
+        if (!audioBuffer) {
+            await loadAlarmSound();
+        }
+
+        const volume = document.getElementById('volumeSlider').value / 100;
+        const repeatCount = parseInt(document.getElementById('repeatSlider').value);
+        
+        for (let i = 0; i < repeatCount; i++) {
+            const source = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
+            
+            source.buffer = audioBuffer;
+            gainNode.gain.value = volume;
+            
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            source.start(audioContext.currentTime + (i * audioBuffer.duration));
+        }
+    } catch (error) {
+        console.error('Error playing alarm:', error);
+    }
+}
+
+// Modify the testSound function
+async function testSound() {
+    try {
+        if (!isAudioContextInitialized) {
+            initializeAudioContext();
+        }
+        await playAlarm();
+    } catch (error) {
+        console.error('Error testing sound:', error);
+    }
+}
+
+// Add event listeners for user interaction
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize audio on first user interaction
+    const initAudio = () => {
+        initializeAudioContext();
+        document.removeEventListener('click', initAudio);
+        document.removeEventListener('touchstart', initAudio);
+    };
+
+    document.addEventListener('click', initAudio);
+    document.addEventListener('touchstart', initAudio);
+});
+
+// Modify the timer completion function
+function timerComplete() {
+    if (isTimerRunning) {
+        isTimerRunning = false;
+        document.getElementById('mainButton').textContent = 'START';
+        document.body.classList.remove('timer-running');
+    }
+
+    // Play sound and show notification
+    playAlarm();
+    showNotification();
+    
+    // Handle auto-switching
+    if (currentMode === 'pomodoro' && document.getElementById('autoBreakSwitch').checked) {
+        const completedPomodoros = parseInt(localStorage.getItem('completedPomodoros') || '0') + 1;
+        localStorage.setItem('completedPomodoros', completedPomodoros);
+        
+        if (completedPomodoros % 4 === 0) {
+            setTimer(parseInt(document.getElementById('longBreakTime').value), 'long-break');
+        } else {
+            setTimer(parseInt(document.getElementById('shortBreakTime').value), 'short-break');
+        }
+    } else if ((currentMode === 'short-break' || currentMode === 'long-break') && 
+               document.getElementById('autoPomodoroSwitch').checked) {
+        setTimer(parseInt(document.getElementById('pomodoroTime').value), 'pomodoro');
+    }
+}
