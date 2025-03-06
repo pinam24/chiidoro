@@ -596,3 +596,118 @@ input:checked + .slider:before {
     margin-top: 0.25rem;
     display: block;
 }
+
+/* Add responsive design styles */
+@media screen and (max-width: 768px) {
+    .timer-container {
+        width: 90%;
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .time-display {
+        font-size: 4rem;
+    }
+
+    #mainButton {
+        width: 150px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .timer-options button {
+        padding: 0.5rem 0.8rem;
+        margin: 0 0.2rem;
+        font-size: 0.9rem;
+    }
+
+    .settings-panel {
+        width: 90%;
+        padding: 1rem;
+        max-height: 90vh;
+    }
+
+    .settings-content {
+        max-height: calc(90vh - 2rem);
+    }
+
+    .setting-group input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Adjust volume and repeat sliders for touch */
+    .volume-slider::-webkit-slider-thumb,
+    .repeat-slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    .volume-slider::-moz-range-thumb,
+    .repeat-slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Make switches easier to tap */
+    .switch {
+        width: 70px;
+        height: 40px;
+    }
+
+    .slider:before {
+        height: 32px;
+        width: 32px;
+        left: 4px;
+        bottom: 4px;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+}
+
+/* Add viewport meta tag to prevent unwanted scaling */
+@media screen and (max-width: 480px) {
+    .time-display {
+        font-size: 3.5rem;
+    }
+
+    .timer-options button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .settings-panel h2 {
+        font-size: 1.1rem;
+    }
+
+    .setting-group label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Add touch-friendly styles */
+@media (hover: none) {
+    #mainButton:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    #mainButton:active {
+        transform: scale(0.95);
+    }
+
+    .timer-options button:hover {
+        background-color: transparent;
+    }
+}
+
+/* Prevent text selection during timer */
+.time-display, 
+#mainButton,
+.timer-options button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
