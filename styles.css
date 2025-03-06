@@ -1,0 +1,598 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+.timer-container {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.time-display {
+    font-size: 7rem;
+    margin: 1rem 0;
+    color: white;
+    font-weight: 300;
+}
+
+.buttons {
+    margin: 1rem 0;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.timer-options button {
+    background-color: transparent;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: bold;
+    border: none;
+    position: relative;
+    padding: 0.8rem 1.2rem;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease;
+}
+
+/* Add active state styles for option buttons */
+.timer-options button.active {
+    color: white;
+}
+
+/* Background indicators for active state */
+body.pomodoro .timer-options button[onclick*="pomodoro"] {
+    background-color: #7babc4;
+    color: white;
+}
+
+body.short-break .timer-options button[onclick*="short-break"] {
+    background-color: #fbc2cb;
+    color: white;
+}
+
+body.long-break .timer-options button[onclick*="long-break"] {
+    background-color: #422620;
+    color: white;
+}
+
+/* Hover effects */
+.timer-options button:hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+body.pomodoro .timer-options button:hover {
+    background-color: rgba(123, 171, 196, 0.1);
+}
+
+body.short-break .timer-options button:hover {
+    background-color: rgba(251, 194, 203, 0.1);
+}
+
+body.long-break .timer-options button:hover {
+    background-color: rgba(66, 38, 32, 0.1);
+}
+
+
+/* Add lighter background colors for the timer container */
+body.pomodoro .timer-container {
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+body.short-break .timer-container {
+    background-color: rgba(251, 194, 203, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+body.long-break .timer-container {
+    background-color: rgba(255, 241, 203, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.timer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+#mainButton {
+    width: 200px;
+    height: 60px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: white;
+    text-transform: uppercase;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, color 1s ease;
+}
+
+#mainButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+#mainButton:active {
+    transform: scale(0.95);
+}
+
+/* Add text color changes for different modes */
+body.pomodoro #mainButton {
+    color: #7babc4;
+}
+
+body.short-break #mainButton {
+    color: #fbc2cb;
+}
+
+body.long-break #mainButton {
+    color: #422620;
+}
+
+/* Timer display colors */
+body.pomodoro .time-display {
+    color: #7babc4;
+}
+
+body.short-break .time-display {
+    color: #fbc2cb;
+}
+
+body.long-break .time-display {
+    color: #422620;
+}
+
+/* Settings Button */
+#settingsButton {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+#settingsButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Settings Panel */
+.settings-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    display: none;
+    min-width: 300px;
+    max-height: 80vh; /* Limit height to 80% of viewport height */
+    transition: background-color 1s ease;
+}
+
+.settings-panel.show {
+    display: block;
+}
+
+.settings-content {
+    max-height: calc(80vh - 4rem); /* Account for padding */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 1rem; /* Add space for scrollbar */
+    
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+    
+    /* Style the scrollbar */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 #f1f1f1; /* For Firefox */
+}
+
+/* Webkit scrollbar styles (Chrome, Safari, Edge) */
+.settings-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Add some spacing between sections */
+.settings-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.settings-content h2:first-child {
+    margin-top: 0;
+}
+
+/* Add padding to the bottom of the content */
+.settings-content > *:last-child {
+    margin-bottom: 1rem;
+}
+
+.settings-content h2 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.setting-group {
+    margin-bottom: 1rem;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.setting-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.color-btn {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+}
+
+.color-btn:hover {
+    transform: scale(1.05);
+}
+
+#saveSettings {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#saveSettings:hover {
+    background-color: #45a049;
+}
+
+/* Update settings panel colors based on theme */
+body.pomodoro .settings-panel { 
+    background-color: #7babc4;
+    color: white;
+}
+body.short-break .settings-panel { 
+    background-color: #fbc2cb;
+    color: white;
+}
+body.long-break .settings-panel { 
+    background-color: #422620;
+    color: white;
+}
+
+/* Remove theme settings styles */
+.theme-settings,
+.theme-tabs,
+.theme-tab,
+.color-settings,
+.color-setting-group,
+.color-picker {
+    display: none;
+}
+
+/* Update settings panel text colors */
+.settings-panel h2,
+.settings-panel label,
+.settings-panel small {
+    color: white;
+}
+
+/* Settings sections with transparent white background */
+.sound-settings,
+.auto-switch-settings,
+.time-settings {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Auto-switch text color */
+.auto-switch-settings .switch-group label {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* Input fields and select background */
+.setting-group input,
+.alarm-select {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Volume and repeat sliders container */
+.volume-slider-container,
+.repeat-slider-container {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+#volumeValue,
+#repeatValue {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* Test sound button */
+.test-sound-btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.test-sound-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/* Save settings button */
+#saveSettings {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+#saveSettings:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/* Notification button */
+#notificationPermission {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+#notificationPermission:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/* Add dark theme styles */
+body.timer-running {
+    background-color: #1a1a1a !important;
+}
+
+body.timer-running .timer-container {
+    background-color: #2d2d2d !important;
+}
+
+body.timer-running .time-display {
+    color: #808080;
+}
+
+body.timer-running .timer-options button {
+    color: #808080;
+}
+
+body.timer-running .timer-options button.active {
+    color: #808080;
+    background-color: #2d2d2d !important;
+}
+
+body.timer-running #mainButton {
+    color: #808080;
+}
+
+/* Add switch styles */
+.auto-switch-settings {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+
+.switch-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.switch-group:last-child {
+    margin-bottom: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Sound Settings Styles */
+.alarm-select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.volume-control {
+    margin-top: 1rem;
+}
+
+.volume-slider-container,
+.repeat-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.volume-slider,
+.repeat-slider {
+    flex-grow: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb,
+.repeat-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.volume-slider::-moz-range-thumb,
+.repeat-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover,
+.repeat-slider::-webkit-slider-thumb:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#volumeValue,
+#repeatValue {
+    min-width: 3rem;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.test-sound-btn {
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+#notificationPermission {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.setting-group small {
+    margin-top: 0.25rem;
+    display: block;
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiidoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="timer-container">
+        <div class="timer-options">
+            <button onclick="setTimer(25, 'pomodoro')" class="active">Pomodoro</button>
+            <button onclick="setTimer(5, 'short-break')">Short Break</button>
+            <button onclick="setTimer(15, 'long-break')">Long Break</button>
+        </div>
+        <div class="timer-content">
+            <div class="time-display" id="timer">25:00</div>
+            <button id="mainButton" onclick="toggleTimer()">START</button>
+        </div>
+        <button id="settingsButton" onclick="toggleSettings()">⚙️</button>
+    </div>
+
+    <!-- Add Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-content">
+            <h2>Timer Settings</h2>
+            <div class="time-settings">
+                <div class="setting-group">
+                    <label>Pomodoro (minutes)</label>
+                    <input type="number" id="pomodoroTime" value="25" min="1" max="60">
+                </div>
+                <div class="setting-group">
+                    <label>Short Break (minutes)</label>
+                    <input type="number" id="shortBreakTime" value="5" min="1" max="30">
+                </div>
+                <div class="setting-group">
+                    <label>Long Break (minutes)</label>
+                    <input type="number" id="longBreakTime" value="15" min="1" max="60">
+                </div>
+                <div class="auto-switch-settings">
+                    <div class="switch-group">
+                        <label>Auto-switch to Break</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoBreakSwitch">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <label>Auto-switch to Pomodoro</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoPomodoroSwitch">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <h2>Notifications</h2>
+                <button id="notificationPermission" onclick="requestNotificationPermission()">
+                    Enable Notifications
+                </button>
+                <small>Allow notifications to receive timer completion alerts</small>
+            </div>
+            
+            <h2>Sound Settings</h2>
+            <div class="sound-settings">
+                <label>Choose Alarm Sound</label>
+                <select id="alarmSound" class="alarm-select">
+                    <!-- Alarm options will be populated dynamically -->
+                </select>
+                
+                <div class="volume-control">
+                    <label>Volume</label>
+                    <div class="volume-slider-container">
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50" class="volume-slider">
+                        <span id="volumeValue">50%</span>
+                    </div>
+                </div>
+
+                <div class="repeat-control">
+                    <label>Repeat Count</label>
+                    <div class="repeat-slider-container">
+                        <input type="range" id="repeatSlider" min="1" max="5" value="1" class="repeat-slider">
+                        <span id="repeatValue">1x</span>
+                    </div>
+                </div>
+
+                <button id="testSound" class="test-sound-btn">Test Sound</button>
+            </div>
+            
+            <button id="saveSettings" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
